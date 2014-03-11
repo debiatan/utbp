@@ -1,0 +1,7 @@
+Unit-Test-Based Programming
+===========================
+
+UTBP is a new subparadigm of Declarative Programming, in which code is generated from a description of its intended behavior, specified through unit tests. This work was presented at SIGBOVIK 2014.
+
+For more information, read doc/article.pdf or point your browser to http://blog.debiatan.net/utbp.html .
+

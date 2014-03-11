@@ -1,0 +1,577 @@
+\documentclass[12pt,twocolumn]{article}
+
+%%%%%%   BEGIN LOAD LIBRARIES   %%%%%%   
+% allow html links and make the external url links blue (default is a pinkish color that I don't like)
+\usepackage[utf8]{inputenc}
+\usepackage[pdftex]{hyperref}
+
+\usepackage{eurosym}
+\usepackage{lmodern}
+\usepackage[T1]{fontenc}
+\usepackage{textcomp}
+\usepackage{capt-of}
+\usepackage{subfigure}
+\usepackage{color}
+\usepackage{graphicx}
+\usepackage{verbatim}   % For block comments
+\usepackage{url}        % For long paths
+\usepackage{color}
+\usepackage{longtable}
+\usepackage{lscape}
+
+
+% other libraries that the author of this lab notebook template uses
+\usepackage{fancybox}
+\usepackage{ifthen}
+
+\usepackage{pmboxdraw}
+\usepackage{minted}
+\usepackage{enumitem}
+\setitemize{wide}
+%%%%%%   END LOAD LIBRARIES   %%%%%%   
+
+%\setcounter{secnumdepth}{-1} 
+
+% Use this command to include both the URL as a link and as a footnote
+\newcommand\fnurl[2]{%
+  \href{#1}{#2}\footnote{\url{#1}}%
+}
+
+\definecolor{purple2}{RGB}{173,38,255}
+
+
+
+\title{Unit-Test-based programming}
+\author{
+    Miguel Á. Lechón\footnote{{\small e-mail: \texttt{miguel.lechon+UTBP@gmail.com}}}
+}
+\date{April 1, 2014}
+
+\begin{document}
+\maketitle
+\thispagestyle{empty}
+\pagestyle{empty}
+
+\textit{Adding is when two plus two equals four.}\\\hspace*{0em}\hfill\textsc{Popular Saying}
+
+
+\section*{Abstract}
+This article introduces a new subparadigm of Declarative Programming, in which code is generated from a description of its intended behavior, specified through unit tests. Yes, \fnurl{https://github.com/debiatan/utbp}{for realsies}.\\
+
+\hrule Some sensitive readers may be taken aback by the conceptual flawlessness as well as by the unbeatable simplicity of the method exposed here. Please, {\color{red}stop reading now if you are prone to emotional instability in the face of plain, unadulterated beauty}.\hrule
+
+\section{Introduction}
+Programmers automate stuff. Ambitious programmers dream of automating the automation of stuff. Many have tried; all have failed. Until today.
+
+In this article I will review how functions can be represented using non-botanical trees\cite{McCarthy1960} and how non-botanical trees can be enumerated\cite{EricLippert2010}, leading to the fact that functions themselves can be enumerated in order of increasing complexity. 
+
+Taking advantage of this result, it is possible to automatically generate functions that satisfy arbitrary sets of restrictions, posed as unit tests. By construction, these functions fulfill several desirable properties, such as minimal Kolmogorov Complexity and maximal Occam's Razority.
+
+\section{Motivation}
+This year marks the sixtieth anniversary of the birth of the field of Genetic Programming. While successful as a pastime and as a mechanism to spin Mendel in his grave, its promises of automatic function generation have failed to materialize. 
+
+Some researchers venture that exploration on non-linear genotype-phenotype mappings will lead the field to a second blossoming, while other, perhaps more rational, researchers realize the inadequacy of random recombination as an exploration technique. As Ernst and Sullivan famously stated in a classic opinion piece\cite{ErnstSullivan1998} on the uses of stochastic methods in the healthcare industry,
+\begin{quote}
+    Parents are strangely reassured when the predicted outcome of a critical medical intervention is measured in units other than fractional children alive.
+\end{quote}
+
+\subsection{Motivating example}\label{subsection_motivating_example}
+Let us imagine a small language consisting of a handful of primitives\footnote{for more information, refer to section \ref{subsec_primitives}.} that operate on natural numbers and lists of natural numbers. Among them, we find to our disposal:
+
+\texttt{\textbf{car}}: Given a list, returns its head.
+
+\texttt{\textbf{cdr}}: Given a list, returns its tail.
+
+\texttt{\textbf{succ}}: Returns the successor of a number.
+
+\texttt{\textbf{if}}: Ternary conditional. It evaluates the truth value associated to its first argument and, if found true, it returns the result of evaluating its second argument. Otherwise, it returns the evaluation of its third argument.
+
+Let us further imagine that we intend to program the non-primitive function \texttt{\textbf{length}}, that returns the number of elements of a list. A possible definition in the Unit-Test-based programming (UTBP) paradigm would be:
+
+\begin{minted}[]{python}
+@UTBP
+def length(l):
+    """
+    length(()) == 0
+    length((2, 2, 2, 2, 2)) == 5
+    """
+\end{minted}
+
+This version of UTBP is built on top of Python, as a library, hence the syntax of the example. 
+
+Notice the {\color{purple2} \texttt{@UTPB}} Python decorator, indicating that this function belongs to the Unit-Test-based elite. Notice also how all function logic has been replaced by a documentation string listing assertions for the function to satisfy. Calling this function with arguments of different lengths dispels most doubts on its correctness, but skeptical users may extract some comfort from the examination of its underlying implementation:
+
+\begin{minted}[]{python}
+>>> print(length)
+\end{minted}
+\begin{verbatim}
+    define
+    ├── length
+    └── lambda
+        ├── l
+        └── if
+            ├── l
+            ├── succ
+            │   └── length
+            │       └── cdr
+            │           └── l
+            └── 0
+\end{verbatim}
+
+Readers familiar with LISP-like languages will recognize this as a recursive definition of \texttt{\textbf{length}} in which parentheses have been dumped in favor of a tree-like graphical representation. This code states in unambiguous terms that \texttt{\textbf{length}} of the empty list is 0 and that \texttt{\textbf{length}} of any other list is 1 plus the \texttt{\textbf{length}} of its tail.
+
+The next section provides a more formal treatment of the foundations of the UTBP paradigm.
+
+\section{Materials and methods}\label{section_methods}
+UTBP is aimed at programmers who care about results and eschew implementation details. If you count yourself among their numbers, you may skip this section.
+
+\subsection{NBTSASWs}
+Let us consider a tree with root \texttt{r} and two branches \texttt{b0} and \texttt{b1}, each of them with two leaves (\texttt{l0} and \texttt{l1}, \texttt{l2} and \texttt{l3}). There are three main ways of portraying this tree:
+\begin{verbatim}
+     [a]         [b]          [c]
+l0  l1  l2  l3    r        r
+└─┬─┘   └─┬─┘ ┌───┴───┐    ├── b0
+  b0      b1  b0      b1   │   ├── l0
+  └───┬───┘ ┌─┴─┐   ┌─┴─┐  │   └── l1
+      r     l0  l1  l2  l3 └── b1
+                               ├── l2
+                               └── l3
+\end{verbatim}
+
+Tree \texttt{\textbf{a}} is drawn in a \emph{botanical} fashion. Tree \texttt{\textbf{b}} is clearly of a \emph{non-botanical} kind, since its root points upwards. Tree \texttt{\textbf{c}} is a \emph{non-botanical tree struggling against strong winds}.
+
+Throughout the rest of the article, I will use NBTSASWs exclusively because their aspect ratio suits two-column layouts best.
+
+\subsection{Tree enumeration}
+There is one tree of size one, one tree of size two and two trees of size three.
+
+\begin{verbatim}
+ [1]   [  2  ]    [        3       ]
+  r     r          r         r
+        └── l      └── b     ├── l0
+                       └── l └── l1
+\end{verbatim}
+
+There are five trees of size four.
+\begin{verbatim}
+ [               4                 ]
+  r          r          r         
+  └── b0     └── b0     ├── b0    
+      └── b1     ├── l0 │   └── l0
+          └── l0 └── l1 └── l1    
+        r             r
+        ├── b0        ├── l0
+        └── b1        ├── l1
+            └── l0    └── l2
+\end{verbatim}
+
+The cardinalities for the rest of the sizes are given by the sequence of Catalan numbers, just like all problem in combinatorics\cite{RPStanley2001}. As a Catalan-born, I am very proud of that sequence. It is a bit upsetting, however, that Eugène C. Catalan turned out to be Belgian.
+
+\subsection{Primitive types, operations and constants}\label{subsec_primitives}
+The trees listed so far are just templates and the labels on their nodes are but placeholders. For a tree to represent a function, each of its nodes has to be associated with either an operation of cardinality matching the number of descendants of that node or with a constant, in case the node lacks progeny. 
+
+\subsubsection{Types}
+The two only necessary types for this article are nested lists and natural (non-negative) numbers. Natural numbers are really not that necessary, but I will spare them if only to avoid writing \emph{23} as:
+
+\emph{(()()()()()()()()()()()()()()()()()()()()()()())}
+
+\subsubsection{Arithmetic functions}\label{subsubsection_arithmetic_functions}
+The primitive arithmetic operations are \texttt{\textbf{succ}} (successor) and \texttt{\textbf{pred}} (predecessor). They are preferred over the more common nomenclature \emph{increment} and \emph{decrement}, since this latter alternative implies the use of variables and, once you start relying on mutation, you may as well end statements with semicolons;
+
+\texttt{\textbf{succ}} is a unary operation that returns the natural number immediately following its argument.
+
+\begin{verbatim}
+      succ  -> 1     succ  -> 2
+      └── 0          └── succ     
+                         └── 0
+\end{verbatim}
+
+\texttt{\textbf{pred}} is also unary and returns the natural number immediately preceding its argument. \texttt{\textbf{pred}} of 0 is undefined because accepting the mind-bending abstraction of negative quantities ultimately leads to irrational and complex thoughts.
+
+\begin{verbatim}
+      pred  -> 2     pred  -> 0     
+      └── 3          └── succ       
+                         └── 0      
+\end{verbatim}
+
+\subsubsection{List functions}
+The three UTBP functions that operate on lists are LISP's classical \texttt{\textbf{cons}}, \texttt{\textbf{car}} and \texttt{\textbf{cdr}}. 
+
+\texttt{\textbf{cons}} takes two arguments. The first one can be either a natural number or a list, while the second one has to be a list. It returns a list whose head is equal to the first argument as whose tail matches the second argument.
+
+\begin{verbatim}
+  cons  -> (10 30)  cons  -> ((5) 23)     
+  ├── 10            ├── (5)
+  └── (30)          └── (23)
+\end{verbatim}
+
+\texttt{\textbf{car}} returns the head of the list provided as argument. \texttt{\textbf{car}} of \texttt{\textbf{()}} is undefined.
+
+\begin{verbatim}
+    car  -> 30        car  -> 5
+    └── (30)          └── (5 23)
+\end{verbatim}
+
+\texttt{\textbf{cdr}} returns the tail of the list provided as argument.
+
+\begin{verbatim}
+    cdr  -> ()        cdr  -> (23)
+    └── (30)          └── (5 23)
+\end{verbatim}
+
+
+\subsubsection{Special forms}
+The special form \texttt{\textbf{if}} takes three arguments of any type and evaluates the truth value associated with the first one. If it happens to be true, it returns the result of evaluating its second argument. Otherwise, it returns the outcome of evaluating its third argument.
+
+\begin{verbatim}
+    if  -> 42        if  -> 23
+    ├── succ         ├── 0 
+    │   └── 0        ├── 42 
+    ├── 42           └── 23
+    └── 23              
+\end{verbatim}
+
+\subsubsection{Constants}
+UTBP's two constants are \texttt{\textbf{0}} and \texttt{\textbf{()}}. They are also the only values whose associated truth value is \emph{false}.
+
+\subsubsection{Recursion}
+Expressing iteration using trees, even if they are NBTSASWs, feels unnatural. Iteration also requires variables. Readers are welcome to do whatever they please in the privacy of their homes, but the public use of variables carries a death sentence in many countries.
+
+\subsection{Functions as trees}\label{subsection_functions_as_trees}
+As academics, we are supposed to derive all possible interpretations and connotations from the methods section by ourselves, but this article is all about providing examples for automatic inference, thus:
+
+What is a proper tree representation of the function that \emph{takes a list \texttt{\textbf{l}} and an index \texttt{\textbf{i}} as arguments and returns the element in the \texttt{\textbf{i}}th position of \texttt{\textbf{l}}}?
+
+\begin{verbatim}
+ 0      define
+ 1      ├── index
+ 2      └── lambda
+ 3          ├── l i
+ 4          └── if
+ 5              ├── i
+ 6              ├── index
+ 7              │   ├── cdr
+ 8              │   │   └── l
+ 9              │   └── pred
+10              │       └── i
+11              └── car
+12                  └── l
+\end{verbatim}
+
+Lines 0--3 specify the name of the function (\texttt{\textbf{index}}) and of its arguments (\texttt{\textbf{l}} and \texttt{\textbf{i}}). The \texttt{\textbf{if}} clause (line 5) tests whether \texttt{\textbf{i}} is 0 and if so, makes sure that the zeroth element of the list is returned (line 11). Otherwise, \texttt{\textbf{index}} is called recursively with arguments \texttt{\textbf{cdr l}} (tail of l) and \texttt{\textbf{pred i}} (i+1).
+
+It is the responsibility of the caller to make sure that the magnitude of argument \texttt{\textbf{i}} does not exceed the length of list \texttt{\textbf{l}}. Fortunately for the caller, we already reviewed an automatic implementation of the length of a list in section \ref{subsection_motivating_example}.
+
+\section{Properties}
+\subsection{Seamless integration with Python}
+This article presents a new programming paradigm. Instead of introducing it in an abstract manner, I have implemented it as an extension of Python, a multiparadigm language with a large user base (eighth most popular language at TIOBE at the time of writing\cite{TIOBE}). In this way, I hope to decrease the chance of my effort of many nights ending in a drawer, collecting drawer smell.
+
+We have already established how to define the function that computes the \texttt{\textbf{length}} of a list under the UTBP paradigm, and we have also examined the NBTSASW associated to the \texttt{\textbf{index}} function (section \ref{subsection_functions_as_trees}), but we still need to provide its UTBP definition:
+
+\begin{minted}[]{python}
+@UTBP
+def index(l, a):
+    """
+    index(((4, 7), 8), 0) == (4, 7)
+    index((4, 7, 8), 1) == 7
+    index((4, 7, 8), 2) == 8
+    """
+\end{minted}
+
+The attentive reader will notice how these unit tests are carefully crafted to:
+\begin{itemize}
+    \item Return different indices of the array. If we always returned the first one, the easiest implementation would be \texttt{\textbf{car l}}.
+    \item Use nested lists. That way, we let the UTBP framework infer the types of inputs and outputs so as to provide a sufficiently general implementation.
+\end{itemize}
+
+\subsection{Low barrier to entry}
+Python code is often described as \emph{executable pseudocode}, so one could argue that its users are not programmers that code, but \emph{pseudo-programmers} that \emph{pseudocode}. 
+
+It is a trivial exercise to build a system that generates code from preconditions and postconditions inside a well-behaved language such as Scala\cite{Kneuss2013}, but it is a much harder task to build a tool that does not rely on its users knowing, or even caring, about preconditions or fancy languages. Today's world is in need of dumber tools for careless people.
+
+\subsection{Conciseness}
+Novice programmers are usually required to specify the desired behavior of a target function three times: first by documenting it, then by providing examples of its use and finally by actually implementing it. UTBP-style definitions prey on that redundancy.
+
+\subsection{Guaranteed correctness}
+UTBP's search routine will only stop evaluating functions once it finds one that passes all provided unit tests. If a know-it-all were to try the following definition:
+
+\begin{minted}[]{python}
+@UTBP
+def impossible(a):
+    """
+    impossible(0) == 0
+    impossible(1) == 0
+    """
+\end{minted}
+
+the UTBP routine would never stop, avoiding the generation of an incorrect answer.
+
+\subsection{Minimal Kolmogorov Complexity}
+The solutions generated under the UTBP paradigm possess the minimum amount of nodes necessary to fulfill a given specification using a restricted set of operations and constants, thus making them minimal under the Kolmogorov Complexity measure. 
+
+Some readers will regard this use of Kolmogorov Complexity as a \emph{bastardization} of the strict meaning of the concept, but I doubt Kolmogorov would complain, being \fnurl{https://en.wikipedia.org/wiki/Kolmogorov\#Early\_life}{the son of an unmarried woman} himself.
+
+\subsection{Maximal Occam's Razority}
+Routines that achieve a given task with a guaranteed minimal description length are maximally parsimonious and thus preferable.
+
+\subsection{Avoidance of Terminator-like Judgment Days}
+UTBP does not make computers more intelligent; it simply accentuates their stubbornness. If an unfortunate turn of events leads an instance of the UTBP search engine to stumble on a homicidal routine, the built-in language barrier (code generated is executed inside a LISP-like virtual machine) will prove insurmountable.
+
+Let me be clear on this, your computer will probably plot elaborate plans to end your life, but it will not be able to act on them.
+
+\subsection{Unparalleled performance}
+The implementation of the UTBP paradigm presented in this article is the first of its kind. No benchmarking is necessary to show that its speed is beyond comparison.
+
+\subsection{Unparalleled performance}
+The UTBP search algorithm is fully parallelizable, but it is not parallelized.
+
+\section{Examples}
+\subsection{Boolean functions}
+\subsubsection{Unary Boolean functions}
+Unary and binary Boolean functions are easy to describe using unit tests, since one can enumerate all their possible inputs. \texttt{\textbf{not}} is described as:
+
+\begin{minted}[]{python}
+@UTBP
+def logical_not(a):
+    """
+    logical_not(1) == 0
+    logical_not(0) == 1
+    """
+\end{minted}
+
+Which generates the following code:
+
+\begin{verbatim}
+        define
+        ├── logical_not
+        └── lambda
+            ├── a
+            └── if
+                ├── a
+                ├── 0
+                └── 1
+\end{verbatim}
+
+\subsubsection{Binary Boolean functions}
+I will skip the obvious unit-test Python descriptions for \texttt{\textbf{or}}, \texttt{\textbf{xor}}, \texttt{\textbf{and}} and \texttt{\textbf{nand}}, but I will list their outcome for the reader's enjoyment:
+
+\begin{verbatim}
+define         define
+├── logical_or ├── logical_xor
+└── lambda     └── lambda
+    ├── a b        ├── a b
+    └── if         └── if
+        ├── a          ├── a
+        ├── a          ├── logical_not
+        └── b          │   └── b
+                       └── b          
+define          define
+├── logical_and ├── logical_nand
+└── lambda      └── lambda
+    ├── a b         ├── a b
+    └── if          └── logical_not
+        ├── a           └── logical_and
+        ├── b               ├── a
+        └── 0               └── b      
+\end{verbatim}
+
+The definitions of \texttt{\textbf{xor}} and \texttt{\textbf{nand}} show that the function search engine makes use of previous UTBP definitions to provide simpler expressions than those possible using only the initial set of operations.
+
+\subsubsection{N-ary Boolean functions}
+A classic in the Genetic Programming literature is the Boolean Parity Problem. In it, the target function takes a list of N Boolean digits and decides if the number of ones it contains is odd. An initial attempt using the UTBP framework would be:
+
+\begin{minted}[]{python}
+@UTBP
+def logical_parity(l):
+    """
+    logical_parity((0,)) == 0
+    logical_parity((1,)) == 1
+    logical_parity((0, 0)) == 0
+    logical_parity((0, 1)) == 1
+    """
+\end{minted}
+
+And the shortest routine satisfying it:
+
+\begin{verbatim}
+      define
+      ├── logical_parity
+      └── lambda
+          ├── l
+          └── car
+              └── if
+                  ├── cdr
+                  │   └── l
+                  ├── cdr
+                  │   └── l
+                  └── l
+\end{verbatim}
+
+This code assumes input lists of up to two elements, which makes sense from the low vantage point of the computer, but ends up returning a list instead of Booleans when that condition is violated. 
+
+Enumerating the solutions to a handful of longer examples
+
+\begin{minted}[]{python}
+    """
+    ...
+    logical_parity((0, 0, 0)) == 0
+    logical_parity((0, 0, 1)) == 1
+    logical_parity((0, 1, 1)) == 0
+    """
+\end{minted}
+
+takes care of the problem:
+\begin{verbatim}
+ define
+ ├── logical_parity
+ └── lambda
+     ├── l
+     └── if
+         ├── l
+         ├── logical_xor
+         │   ├── logical_parity
+         │   │   └── cdr
+         │   │       └── l
+         │   └── car
+         │       └── l
+         └── 0
+\end{verbatim}
+
+This code computes the parity of the tail and \texttt{\textbf{xor}}s it with the head. Spotless.
+
+\subsection{Arithmetic functions}
+Hermann Grassmann showed in the 1860s that many arithmetic operations can be derived from the \emph{successor} operation. UTBP can easily replicate some of his findings without giving much thought to the task.
+
+\subsubsection{Addition}
+Back in section \ref{subsubsection_arithmetic_functions}, I introduced UTBP's two arithmetic primitives: \texttt{\textbf{succ}} and \texttt{\textbf{pred}}. From them we can derive addition by writing:
+
+\begin{minted}[]{python}
+@UTBP
+def add(a, b):
+    """
+    add(2, 2) == 4
+    add(3, 3) == 6
+    """
+\end{minted}
+
+The second assertion is there to prevent UTBP from thinking that adding two numbers means returning always the value 4 (which otherwise would be a more parsimonious interpretation). The resulting code reads:
+
+\begin{verbatim}
+ 0  define
+ 1  ├── add
+ 2  └── lambda
+ 3      ├── a b
+ 4      └── if
+ 5          ├── a
+ 6          ├── add
+ 7          │   ├── pred
+ 8          │   │   └── a
+ 9          │   └── succ
+10          │       └── b
+11          └── b
+\end{verbatim}
+
+The mathematically inclined reader will see that the function is equivalent to:
+\begin{itemize}
+    \item[\texttt{11}]: $add(0, b) = b$
+    \item[\texttt{6--10}]: $add(a, b) = add(a-1, b+1)$
+\end{itemize}
+
+The complexity of this function grows linearly with the size of \emph{a} in both execution time and memory consumption, which is quite reasonable for the natural numbers people encounter on everyday tasks.
+
+\subsubsection{Multiplication}
+Defining multiplication without first defining addition is very troubling for both humans and UTBP, but once the more basic operation is in place, these two assertions suffice:
+
+\begin{minted}[]{python}
+@UTBP
+def mul(a, b):
+    """
+    mul(2, 2) == 4
+    mul(3, 5) == 15
+    """
+\end{minted}
+
+This definition leads to:
+
+\begin{verbatim}
+ 0 define
+ 1 ├── mul
+ 2 └── lambda
+ 3     ├── a b
+ 4     └── if
+ 5         ├── a
+ 6         ├── add
+ 7         │   ├── mul
+ 8         │   │   ├── pred
+ 9         │   │   │   └── a
+10         │   │   └── b
+11         │   └── b
+12         └── 0
+\end{verbatim}
+
+Which again has a clear mathematical interpretation:
+\begin{itemize}
+    \item[\texttt{12}]: $mul(0, b) = 0$
+    \item[\texttt{6--11}]: $mul(a, b) = add(mul(a-1, b), b)$
+\end{itemize}
+
+Execution time and memory consumption for this multiplication function grows quadratically with the magnitude of the result. I find this feature useful, since it reminds me of my excesses when I compute my daily caloric intake.
+
+\subsubsection{Exponentiation}
+I am sure the reader gets the idea by now.
+
+\subsection{List functions}
+We have already reviewed the definitions of three functions that operate on lists: \texttt{\textbf{length}}, \texttt{\textbf{index}} and \texttt{\textbf{logical\_parity}}. Now I provide one more example that requires the use of list primitives as well as of a non-primitive arithmetic function.
+
+\subsubsection{Summation}
+
+A possible UTBP definition of summation is:
+
+\begin{minted}[]{python}
+@UTBP
+def sum(l):
+    """
+    sum((2, 2)) == 4
+    sum((3, 3, 3)) == 9
+    """
+\end{minted}
+
+And the function that the two previous assertions generate is correct:
+
+\begin{verbatim}
+ define
+ ├── sum
+ └── lambda
+     ├── l
+     └── if
+         ├── l
+         ├── add
+         │   ├── sum
+         │   │   └── cdr
+         │   │       └── l
+         │   └── car
+         │       └── l
+         └── 0
+\end{verbatim}
+
+Needless to say, programmers are discouraged from examining the code associated with UTBP definitions. It is not your code that defines you, but your actions.
+
+\section{Final remarks}
+
+In this article I have presented a new, simpler approach to programming. I am fully aware that my target audience will probably never read it, so I have decided to provide an alternative, more pragmatic video presentation online. It can be found here:
+
+\href{http://blog.debiatan.net/utbp.html}{\texttt{http://blog.debiatan.net/utbp.html}}
+
+\begin{thebibliography}{1}
+    \bibitem{McCarthy1960} John McCarthy, {\it Recursive functions of symbolic expressions and their computation by machine}. Communications of the ACM 3(4):184-195
+    \bibitem{EricLippert2010} Eric Lippert,
+    {\it \fnurl{http://blogs.msdn.com/b/ericlippert/archive/2010/04/22/every-tree-there-is.aspx}{Every tree there is}} 2010.
+    \bibitem{ErnstSullivan1998} Philip Ernst and Richard Sullivan, {\it Probabilistic pediatrics -- Trusting your progeny to Monte Carlo.} Journal of Proper Parenthood, May 1998, 79-92
+    \bibitem{RPStanley2001} Richard P. Stanley, {\it Enumerative Combinatorics, Volume 2}, June 2001
+    \bibitem{Kneuss2013} E. Kneuss, V. Kuncak, I. Kuraj and P. Suter, {\it Synthesis Modulo Recursive Functions}, Acm Sigplan Notices, vol. 48, num. 10, p. 407-426, 2013
+    \bibitem{TIOBE} {\it \fnurl{http://www.tiobe.com/index.php/content/paperinfo/tpci/index.html}{TIOBE index}}, February 2014
+        
+\end{thebibliography}
+
+
+\end{document}
