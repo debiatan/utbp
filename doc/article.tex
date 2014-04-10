@@ -258,7 +258,7 @@ What is a proper tree representation of the function that \emph{takes a list \te
 12                  └── l
 \end{verbatim}
 
-Lines 0--3 specify the name of the function (\texttt{\textbf{index}}) and of its arguments (\texttt{\textbf{l}} and \texttt{\textbf{i}}). The \texttt{\textbf{if}} clause (line 5) tests whether \texttt{\textbf{i}} is 0 and if so, makes sure that the zeroth element of the list is returned (line 11). Otherwise, \texttt{\textbf{index}} is called recursively with arguments \texttt{\textbf{cdr l}} (tail of l) and \texttt{\textbf{pred i}} (i+1).
+Lines 0--3 specify the name of the function (\texttt{\textbf{index}}) and of its arguments (\texttt{\textbf{l}} and \texttt{\textbf{i}}). The \texttt{\textbf{if}} clause (line 5) tests whether \texttt{\textbf{i}} is 0 and if so, makes sure that the zeroth element of the list is returned (line 11). Otherwise, \texttt{\textbf{index}} is called recursively with arguments \texttt{\textbf{cdr l}} (tail of l) and \texttt{\textbf{pred i}} ($i-1$).
 
 It is the responsibility of the caller to make sure that the magnitude of argument \texttt{\textbf{i}} does not exceed the length of list \texttt{\textbf{l}}. Fortunately for the caller, we already reviewed an automatic implementation of the length of a list in section \ref{subsection_motivating_example}.
 
