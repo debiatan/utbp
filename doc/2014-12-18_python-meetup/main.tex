@@ -14,8 +14,10 @@
 \usetikzlibrary{lindenmayersystems}
 \usepackage[utf8]{inputenc}
 \usepackage{verbatim}
+\usepackage{fancyvrb}
 \usepackage{pifont}
 \usepackage{mathrsfs}
+\usepackage{pmboxdraw}
 \usepackage{minted}
 %%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
 % Code snippets
@@ -54,7 +56,6 @@
 % Code snippets
 \defverbatim[colored]\codeFactorial{
 \begin{pythoncode}
-
 def factorial(n):
     """
     Returns the factorial of n
@@ -84,6 +85,37 @@ def factorial(n):
     """
 \end{pythoncode*}
 }
+
+\defverbatim[colored]\codeLengthIteration{
+\begin{pythoncode*}{fontsize=\large}
+def length(l):
+    i = 0
+    for e in l:
+        i += 1
+    return i
+\end{pythoncode*}
+}
+
+\defverbatim[colored]\codeLengthRecursion{
+\begin{pythoncode*}{fontsize=\large}
+def length(l):
+    if l:
+        return length(l[1:])+1
+    else:
+        return 0
+\end{pythoncode*}
+}
+
+\defverbatim[colored]\codeLengthRecursionSmall{
+\begin{pythoncode*}{fontsize=\scriptsize}
+def length(l):
+    if l: return 1+length(l[1:])
+    else: return 0
+\end{pythoncode*}
+}
+
+
+
 
 
 %%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
@@ -160,43 +192,92 @@ def factorial(n):
 
 %%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
 %%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
-\subsection{But Why?}
-\begin{frame}{But Why?}
+\subsection{Pero\ldots ¿cómo?}
+\begin{frame}{Pero\ldots ¿cómo?}
+    Premisas:
+    \pause
     \begin{itemize}
-        \item I thought some of the criticism might graze our research
-        \item What is the big deal with $\frac{1}{f}$ noise and power-law distributions and systems at the edge of criticality? 
+        \item Toda función se puede escribir de forma recursiva \pause
+        \item Toda función recursiva puede representarse mediante un árbol \pause
+        \item Los árboles se pueden enumerar en order creciente de complejidad \pause
     \end{itemize}
+    Conclusión:
+
+    \textbf{$\rightarrow$ Podemos enumerar todas las funciones de forma ordenada} \pause
+
+    (y comprobar, una a una, si satisfacen nuestras pruebas unitarias)
 \end{frame}
 
 %%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
 %%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
 
-\section{\scshape The original articles}
+\section{\scshape Discusión sesuda}
 
-\subsection{Choosing words}
-\begin{frame}{Choosing words}
-
-\begin{itemize}
-    \item Promises explanation; does not deliver
-    \item \emph{Speech is not modular, it's more complicated}
-    \item Favorite sentence:
-\end{itemize}
-
+\subsection{Toda función se puede escribir de forma recursiva}
+\begin{frame}{Funciones: todas recursivas}
+    \textcolor{red}{Advertencia:} Este es un ejercicio académico \pause extremadamente complejo\pause. Gritad si os perdéis. \pause
+    \begin{columns}
+        \begin{column}{.30\linewidth}
+        \begin{block}
+            \codeLengthIteration
+        \end{block}
+        \end{column}
+        \begin{column}{.65\linewidth}
+        \begin{block}
+            \codeLengthRecursion
+        \end{block}
+        \end{column}
+    \end{columns} \pause
+    La versión recursiva es claramente superior.
 \end{frame}
 
 %%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
 %%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
 
-\subsection{Ultrafast action and cognition}
-\begin{frame}{Ultrafast action and cognition}
+\subsection{Expresiones como árboles}
+\begin{frame}[fragile]
+    \frametitle{Expresiones como árboles}
+    $$\frac{-b\pm\sqrt{b^2-4ac}}{2a}$$
+
+\begin{Verbatim}[commandchars=\\\{\},codes={\catcode`$=3\catcode`_=8}]
+        \textbf{/}
+        ├── \textbf{+/-}
+        │   ├── \textbf{neg}
+        │   │   └── b
+        │   └── \textbf{sqrt}
+        │       └── \textbf{-}
+        │           ├── \textbf{^}
+        │           │   ├── b
+        │           │   └── 2
+        │           └── \textbf{*}
+        │               ├── 4
+        └── \textbf{*}           └── \textbf{*}
+            ├── 2           ├── a
+            └── a           └── c
+\end{Verbatim}
+\end{frame}
 
 
-\begin{itemize}
-    \item \emph{Neuronal control cannot explain ultrafast reaction}
-    \item \emph{Scale-freedom is everywhere}
-    \item \emph{This thing hast to be complex}
-    \item Maybe it is just a review, but it sounds like the Rumpelstiltskin approach to neuroscience (\emph{neuromusculoskeletal synergies are the solution!})
-\end{itemize}
+
+\subsection{Toda función recursiva puede representarse mediante un árbol}
+\begin{frame}[fragile]
+    \frametitle{Funciones recursivas: todas árboles}
+    \codeLengthRecursionSmall
+\begin{Verbatim}[commandchars=\\\{\},codes={\catcode`$=3\catcode`_=8}]
+\textbf{python}                \textbf{pseudo-scheme}
+def                   define                    
+  length              ├── length                
+                      └── lambda                
+(l):                      ├── l                 
+    if                    └── if                
+      l:                      ├── l             
+        return 1+             ├── succ          
+            length(           │   └── length    
+                l[1:]         │       └── cdr   
+            )                 │           └── l 
+    else: return 0            └── 0             
+\end{Verbatim}
+
 \end{frame}
 
 \subsection{Brain-body-niche}
