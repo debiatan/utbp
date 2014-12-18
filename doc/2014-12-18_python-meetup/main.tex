@@ -114,7 +114,38 @@ def length(l):
 \end{pythoncode*}
 }
 
+\defverbatim[colored]\codeLengthExampleA{
+\begin{pythoncode*}{fontsize=\scriptsize}
+@UTBP
+def length(l):
+"""
+length(()) == 0
+"""
+\end{pythoncode*}
+}
 
+\defverbatim[colored]\codeLengthExampleB{
+\begin{pythoncode*}{fontsize=\scriptsize}
+@UTBP
+def length(l):
+"""
+length(()) == 0
+length((2,)) == 1
+"""
+\end{pythoncode*}
+}
+
+\defverbatim[colored]\codeLengthExampleC{
+\begin{pythoncode*}{fontsize=\scriptsize}
+@UTBP
+def length(l):
+"""
+length(()) == 0
+length((2,)) == 1
+length((2, 3)) == 2
+"""
+\end{pythoncode*}
+}
 
 
 
@@ -211,7 +242,7 @@ def length(l):
 %%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
 %%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
 
-\section{\scshape Discusión sesuda}
+\section{\scshape Premisas}
 
 \subsection{Toda función se puede escribir de forma recursiva}
 \begin{frame}{Funciones: todas recursivas}
@@ -277,67 +308,137 @@ def                   define
             )                 │           └── l 
     else: return 0            └── 0             
 \end{Verbatim}
+\end{frame}
+
+\subsection{Los árboles se pueden enumerar en order creciente de complejidad \pause}
+\begin{frame}[fragile]
+    \frametitle{Árboles: enumerables}
+\begin{Verbatim}[commandchars=\\\{\},codes={\catcode`$=3\catcode`_=8}]
+     [\textbf{1}]   [  \textbf{2}  ]    [        \textbf{3}       ]
+      r     r          r         r
+            └── l      └── b     ├── l0
+                           └── l └── l1
+\end{Verbatim}
+
+\pause
+
+\begin{Verbatim}[commandchars=\\\{\},codes={\catcode`$=3\catcode`_=8}]
+     [               \textbf{4}                 ]
+      r          r          r         
+      └── b0     └── b0     ├── b0    
+          └── b1     ├── l0 │   └── l0
+              └── l0 └── l1 └── l1    
+            r             r
+            ├── b0        ├── l0
+            └── b1        ├── l1
+                └── l0    └── l2
+\end{Verbatim}
+
+
 
 \end{frame}
 
-\subsection{Brain-body-niche}
-\begin{frame}{Brain-body-niche}
-
-\begin{itemize}
-    \item \emph{No need to dissociate brain from body or body from environment}
-    \item \emph{Who needs internal representations when you're part of the system you're trying to represent?}
-    \item \emph{No computation}
-\end{itemize}
-\end{frame}
-
-\subsection{Multifractal fractality}
-\begin{frame}{Multifractal fractality}
-\begin{itemize}
-    \item \emph{Power-laws imply complexity. Exponents, exponents!}
-    \item \emph{Forget about computation. Let's talk about energy flow.}
-    \item \emph{No computation}
-\end{itemize}
-
-\end{frame}
-
-\section{\scshape Criticism}
-\subsection{Criticism}
-\begin{frame}{Criticism}
-    Approach taken by three of the articles
+\section{\scshape Ingredientes}
+\subsection{Ingredientes}
+\begin{frame}{Ingredientes}
     \begin{itemize}
-        \item \emph{Detect 1/f noise in time series of human performance}
+        \item Árboles \pause \emph{(déjà vu)} \pause \textcolor{gray}{\scriptsize(de jabugo)} \pause
+        \item Tipos: \pause
             \begin{itemize}
-                \item Competing models?
-                \item Frailty of the measure
+            \item Números naturales no negativos \pause
+            \item Listas, posiblemente anidadas
             \end{itemize}
-        \item \emph{The presence of 1/f noise implies an interaction dominant system}
+        \item Operaciones
             \begin{itemize}
-                \item Other systems can also generate 1/f noise
-                \item Generation of 1/f noise in complex systems depends on specific circumstances
+                \item Funciones aritméticas (e.g. \texttt{succ})
+                \item Manipulación de listas (e.g. \texttt{cdr})
+                \item Formas especiales (\texttt{if})
             \end{itemize}
-        \item \emph{Cognition is interaction-dominant and traditional approaches should be abandoned}
+        \item Constantes
             \begin{itemize}
-                \item The complex systems approach should explain something that traditional approaches cannot explain.
-                \item Model instead of ``solving'' by dropping terms like self-organized criticality
+                \item \texttt{0}
+                \item \texttt{()}
             \end{itemize}
     \end{itemize}
 \end{frame}
 
-\subsection{Piles of rice and salt}
-\begin{frame}{Piles of rice and salt}
-\end{frame}
+\section{\scshape Ejemplo de uso}
+\subsection{Ejemplo}
+\begin{frame}[fragile]
+    \frametitle{Ejemplo de uso -- Longitud de una lista}
+    \begin{columns}
+        \begin{column}{.50\linewidth}
+        \begin{block}
+            \codeLengthExampleA
+        \end{block}
+        \end{column}\pause
+        \begin{column}{.50\linewidth}
+        \begin{verbatim}
+define
+├── length
+└── lambda
+    ├── l
+    └── 0
+        \end{verbatim}
+        \end{column}
+    \end{columns}\pause
 
-\subsection{Does this apply to us?}
-\begin{frame}{Does this apply to us?}
-    I don't think much of the discussion applies to us (the original Frontiers article should not have confronted Wagenmakers and Friston and we \emph{do} talk about components as well as their interactions), however\ldots
-    \begin{itemize}
-        \item Do we make our best effort to disprove criticality? Competing hypotheses.
-        \item Do we try to model something other than 1/f?
-    \end{itemize}
+    \begin{columns}
+        \begin{column}{.50\linewidth}
+        \begin{block}
+            \codeLengthExampleB
+        \end{block}
+        \end{column}\pause
+        \begin{column}{.50\linewidth}
+        \begin{verbatim}
+define
+├── length
+└── lambda
+    ├── l
+    └── if
+        ├── l
+        ├── list?
+        │   └── l
+        └── 0
+        \end{verbatim}
+        \end{column}
+    \end{columns}
 \end{frame}
 
 %%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
 %%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
+
+\subsection{Ejemplo}
+\begin{frame}[fragile]
+    \frametitle{Ejemplo de uso -- Longitud de una lista}
+    \begin{columns}
+        \begin{column}{.50\linewidth}
+        \begin{block}
+            \codeLengthExampleC
+        \end{block}
+        \end{column}\pause
+        \begin{column}{.50\linewidth}
+        \begin{verbatim}
+define
+├── length
+└── lambda
+    ├── l
+    └── if
+        ├── l
+        ├── succ
+        │   └── length
+        │       └── cdr
+        │           └── l
+        └── 0
+        \end{verbatim}
+        \end{column}
+    \end{columns}
+\end{frame}
+
+%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
+%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
+
+
 
 \section{\scshape Doubts}
 \subsection{Doubts}
