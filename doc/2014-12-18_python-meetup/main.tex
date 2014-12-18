@@ -100,9 +100,15 @@ def length(l):
 \begin{pythoncode*}{fontsize=\large}
 def length(l):
     if l:
-        return length(l[1:])+1
+        return 1+length(l[1:])
     else:
         return 0
+\end{pythoncode*}
+}
+
+\defverbatim[colored]\codeLengthGoToHell{
+\begin{pythoncode*}{fontsize=\large}
+length = lambda l: sum(1 for e in l)
 \end{pythoncode*}
 }
 
@@ -150,10 +156,10 @@ length((2, 3)) == 2
 \defverbatim[colored]\codeImpossible{
 \begin{pythoncode*}{fontsize=\scriptsize}
     @UTBP
-    def impossible(l):
+    def imposible(l):
     """
-    impossible(0) == 0
-    impossible(0) == 1
+    imposible(0) == 0
+    imposible(0) == 1
     """
 \end{pythoncode*}
 }
@@ -226,7 +232,6 @@ length((2, 3)) == 2
 %%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
 \subsection{Programación basada en pruebas unitarias}
 \begin{frame}{Programación basada en pruebas unitarias}
-    \pause
     \codeFactorialTarget \pause
     Sí, funciona.
 \end{frame}
@@ -245,9 +250,9 @@ length((2, 3)) == 2
     \end{itemize}
     Conclusión:
 
-    \textbf{$\rightarrow$ Las funciones se pueden enumerar de forma ordenada} \pause
+    \textbf{$\rightarrow$ Las funciones se pueden enumerar en orden creciente de complejidad} \pause
 
-    (y comprobar, una a una, si satisfacen nuestras pruebas unitarias)
+    (y podemos comprobar, una a una, si satisfacen un conjunto arbitrario de pruebas unitarias)
 \end{frame}
 
 %%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
@@ -256,14 +261,15 @@ length((2, 3)) == 2
 \section{\scshape Premisas}
 
 \subsection{Toda función se puede escribir de forma recursiva}
-\begin{frame}{Funciones: todas recursivas}
+\begin{frame}[fragile]
+    \frametitle{Recursividad para todo}
     \textcolor{red}{Advertencia:} Este es un ejercicio académico \pause extremadamente complejo\pause. Gritad si os perdéis. \pause
     \begin{columns}
         \begin{column}{.30\linewidth}
         \begin{block}
             \codeLengthIteration
         \end{block}
-        \end{column}
+        \end{column} \pause
         \begin{column}{.65\linewidth}
         \begin{block}
             \codeLengthRecursion
@@ -271,6 +277,9 @@ length((2, 3)) == 2
         \end{column}
     \end{columns} \pause
     La versión recursiva es claramente superior.
+
+    \pause\codeLengthGoToHell
+
 \end{frame}
 
 %%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
@@ -323,7 +332,7 @@ def                   define
 \end{Verbatim}
 \end{frame}
 
-\subsection{Los árboles se pueden enumerar en order creciente de complejidad \pause}
+\subsection{Los árboles se pueden enumerar en orden creciente de complejidad \pause}
 \begin{frame}[fragile]
     \frametitle{Enumeración de árboles}
 \begin{Verbatim}[commandchars=\\\{\},codes={\catcode`$=3\catcode`_=8}]
@@ -353,19 +362,19 @@ def                   define
 
 \section{\scshape Ingredientes}
 \subsection{Ingredientes}
-\begin{frame}{Ingredientes}
+\begin{frame}{Ingredientes del paradigma UTBP}
     \begin{itemize}
-        \item Árboles \pause \emph{(déjà vu)} \pause \textcolor{gray}{\scriptsize(de jabugo)} \pause
-        \item Tipos: \pause
+        \item Estructuras arborescentes \pause \emph{(déjà vu)} \pause 
+        \item Pobladas por operaciones: \pause
+            \begin{itemize}
+                \item Funciones aritméticas (\texttt{succ}, \texttt{pred}) \pause
+                \item Manipulación de listas (\texttt{car}, \texttt{cdr}, \texttt{cons}, \texttt{list?}) \pause
+                \item Formas especiales (\texttt{if}) \pause
+            \end{itemize}
+        \item Sobre dos tipos: \pause
             \begin{itemize}
             \item Números naturales no negativos \pause
-            \item Listas, posiblemente anidadas \pause
-            \end{itemize}
-        \item Operaciones: \pause
-            \begin{itemize}
-                \item Funciones aritméticas (e.g. \texttt{succ}) \pause
-                \item Manipulación de listas (e.g. \texttt{cdr}) \pause
-                \item Formas especiales (\texttt{if}) \pause
+            \item Listas, posiblemente anidadas (realmente tuplas, porque no pensamos mutarlas)\pause
             \end{itemize}
         \item Constantes (operaciones sobre cero elementos): \pause
             \begin{itemize}
@@ -445,7 +454,9 @@ define
         └── 0
         \end{verbatim}
         \end{column}
-    \end{columns}
+    \end{columns} \pause
+
+    Glorioso.
 \end{frame}
 
 %%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
@@ -458,17 +469,19 @@ define
             \begin{block}
                 \codeImpossible
             \end{block} \pause
-        \item Prevención de días del juicio final al estilo \emph{Terminator}
-            (intérprete de Scheme derivado de \texttt{http://norvig.com/lispy.html})\pause
+        \item Prevención de días del juicio final del estilo \emph{Terminator}
+            (amurallado dentro de un intérprete de Scheme derivado de \texttt{http://norvig.com/lispy.html})\pause
+        \item Interoperable con Python estándar \pause
         \item Complejidad de Kolmogorov mínima \pause
-        \item Navajidad de Occam máxima
+        \item Navajitud de Occam máxima
     \end{itemize}
 \end{frame}
 
 \subsection{Conclusión}
 \begin{frame}{Conclusión}
-    El mundo necesita más herramientas simples \pause y estúpidas\pause
+    La programación imperativa es como muy del siglo XX. \pause
 
+    El mundo necesita herramientas más simples y estúpidas 
     para programadores descuidados.\pause
 
     \vspace{1in}
