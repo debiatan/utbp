@@ -149,12 +149,12 @@ length((2, 3)) == 2
 
 \defverbatim[colored]\codeImpossible{
 \begin{pythoncode*}{fontsize=\scriptsize}
-@UTBP
-def impossible(l):
-"""
-impossible(0) == 0
-impossible(0) == 1
-"""
+    @UTBP
+    def impossible(l):
+    """
+    impossible(0) == 0
+    impossible(0) == 1
+    """
 \end{pythoncode*}
 }
 
@@ -195,7 +195,7 @@ impossible(0) == 1
         \item Informático \pause
         \item Programador \textcolor{red}{sin código en producción} \pause
         \item Administrador de sistemas \textcolor{red}{mediocre} \pause
-        \item Ex-estudiante de doctorado \textcolor{red}{sin doctorado} \pause
+        \item Ex-estudiante de doctorado \textcolor{red}{no doctorado} \pause
         \item Actualmente, \textcolor{blue}{ama de casa}
     \end{itemize}
 \end{frame}
@@ -219,15 +219,16 @@ impossible(0) == 1
             \end{itemize}
         \end{column}
     \end{columns}
-    Uno no aprende a programar para trabajar más de la cuenta.
+    Nadie aprende a programar para trabajar más de la cuenta. Tiene que haber una manera mejor\ldots
 \end{frame}
 
 %%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
 %%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
-\subsection{Objetivo}
-\begin{frame}{Objetivo}
+\subsection{Programación basada en pruebas unitarias}
+\begin{frame}{Programación basada en pruebas unitarias}
     \pause
-    \codeFactorialTarget
+    \codeFactorialTarget \pause
+    Sí, funciona.
 \end{frame}
 
 
@@ -240,11 +241,11 @@ impossible(0) == 1
     \begin{itemize}
         \item Toda función se puede escribir de forma recursiva \pause
         \item Toda función recursiva puede representarse mediante un árbol \pause
-        \item Los árboles se pueden enumerar en order creciente de complejidad \pause
+        \item Los árboles se pueden enumerar en orden creciente de complejidad \pause
     \end{itemize}
     Conclusión:
 
-    \textbf{$\rightarrow$ Podemos enumerar todas las funciones de forma ordenada} \pause
+    \textbf{$\rightarrow$ Las funciones se pueden enumerar de forma ordenada} \pause
 
     (y comprobar, una a una, si satisfacen nuestras pruebas unitarias)
 \end{frame}
@@ -279,6 +280,8 @@ impossible(0) == 1
 \begin{frame}[fragile]
     \frametitle{Expresiones como árboles}
     $$\frac{-b\pm\sqrt{b^2-4ac}}{2a}$$
+    
+    \pause
 
 \begin{Verbatim}[commandchars=\\\{\},codes={\catcode`$=3\catcode`_=8}]
         \textbf{/}
@@ -302,7 +305,7 @@ impossible(0) == 1
 
 \subsection{Toda función recursiva puede representarse mediante un árbol}
 \begin{frame}[fragile]
-    \frametitle{Funciones recursivas: todas árboles}
+    \frametitle{Funciones recursivas como árboles}
     \codeLengthRecursionSmall
 \begin{Verbatim}[commandchars=\\\{\},codes={\catcode`$=3\catcode`_=8}]
 \textbf{python}                \textbf{pseudo-scheme}
@@ -322,7 +325,7 @@ def                   define
 
 \subsection{Los árboles se pueden enumerar en order creciente de complejidad \pause}
 \begin{frame}[fragile]
-    \frametitle{Árboles: enumerables}
+    \frametitle{Enumeración de árboles}
 \begin{Verbatim}[commandchars=\\\{\},codes={\catcode`$=3\catcode`_=8}]
      [\textbf{1}]   [  \textbf{2}  ]    [        \textbf{3}       ]
       r     r          r         r
@@ -447,15 +450,31 @@ define
 
 %%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
 %%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
-\section{\scshape Propiedades}
-\subsection{Propiedades}
-\begin{frame}{Propiedades}
+\section{\scshape En conclusión}
+\subsection{Características}
+\begin{frame}{Características}
     \begin{itemize}
-        \item Corrección garantizada
+        \item Corrección garantizada \pause
             \begin{block}
                 \codeImpossible
-            \end{block}
+            \end{block} \pause
+        \item Prevención de días del juicio final al estilo \emph{Terminator}
+            (intérprete de Scheme derivado de \texttt{http://norvig.com/lispy.html})\pause
+        \item Complejidad de Kolmogorov mínima \pause
+        \item Navajidad de Occam máxima
     \end{itemize}
 \end{frame}
+
+\subsection{Conclusión}
+\begin{frame}{Conclusión}
+    El mundo necesita más herramientas simples \pause y estúpidas\pause
+
+    para programadores descuidados.\pause
+
+    \vspace{1in}
+
+    {\Large ¿Preguntas?}
+\end{frame}
+
 
 \end{document}
