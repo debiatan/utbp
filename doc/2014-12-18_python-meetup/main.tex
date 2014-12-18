@@ -115,7 +115,7 @@ def length(l):
 }
 
 \defverbatim[colored]\codeLengthExampleA{
-\begin{pythoncode*}{fontsize=\scriptsize}
+\begin{pythoncode*}{fontsize=\large}
 @UTBP
 def length(l):
 """
@@ -125,7 +125,7 @@ length(()) == 0
 }
 
 \defverbatim[colored]\codeLengthExampleB{
-\begin{pythoncode*}{fontsize=\scriptsize}
+\begin{pythoncode*}{fontsize=\large}
 @UTBP
 def length(l):
 """
@@ -136,7 +136,7 @@ length((2,)) == 1
 }
 
 \defverbatim[colored]\codeLengthExampleC{
-\begin{pythoncode*}{fontsize=\scriptsize}
+\begin{pythoncode*}{fontsize=\Large}
 @UTBP
 def length(l):
 """
@@ -147,6 +147,16 @@ length((2, 3)) == 2
 \end{pythoncode*}
 }
 
+\defverbatim[colored]\codeImpossible{
+\begin{pythoncode*}{fontsize=\scriptsize}
+@UTBP
+def impossible(l):
+"""
+impossible(0) == 0
+impossible(0) == 1
+"""
+\end{pythoncode*}
+}
 
 
 %%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
@@ -346,17 +356,17 @@ def                   define
         \item Tipos: \pause
             \begin{itemize}
             \item Números naturales no negativos \pause
-            \item Listas, posiblemente anidadas
+            \item Listas, posiblemente anidadas \pause
             \end{itemize}
-        \item Operaciones
+        \item Operaciones: \pause
             \begin{itemize}
-                \item Funciones aritméticas (e.g. \texttt{succ})
-                \item Manipulación de listas (e.g. \texttt{cdr})
-                \item Formas especiales (\texttt{if})
+                \item Funciones aritméticas (e.g. \texttt{succ}) \pause
+                \item Manipulación de listas (e.g. \texttt{cdr}) \pause
+                \item Formas especiales (\texttt{if}) \pause
             \end{itemize}
-        \item Constantes
+        \item Constantes (operaciones sobre cero elementos): \pause
             \begin{itemize}
-                \item \texttt{0}
+                \item \texttt{0} \pause
                 \item \texttt{()}
             \end{itemize}
     \end{itemize}
@@ -365,7 +375,7 @@ def                   define
 \section{\scshape Ejemplo de uso}
 \subsection{Ejemplo}
 \begin{frame}[fragile]
-    \frametitle{Ejemplo de uso -- Longitud de una lista}
+    \frametitle{Ejemplo de uso -- Longitud de una lista}\pause
     \begin{columns}
         \begin{column}{.50\linewidth}
         \begin{block}
@@ -437,16 +447,14 @@ define
 
 %%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
 %%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
-
-
-
-\section{\scshape Doubts}
-\subsection{Doubts}
-\begin{frame}{Doubts}
-I'm no statistical physicist and I should not take on blind faith some of 
+\section{\scshape Propiedades}
+\subsection{Propiedades}
+\begin{frame}{Propiedades}
     \begin{itemize}
-        \item Power-laws and fractals
-        \item Power-laws and complexity
+        \item Corrección garantizada
+            \begin{block}
+                \codeImpossible
+            \end{block}
     \end{itemize}
 \end{frame}
 
